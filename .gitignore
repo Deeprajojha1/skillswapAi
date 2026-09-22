@@ -1,0 +1,54 @@
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+**/.env
+**/.env.*
+!**/.env.example
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Build outputs
+dist/
+build/
+coverage/
+**/dist/
+**/build/
+**/coverage/
+
+# Runtime uploads and generated files
+uploads/
+tmp/
+temp/
+*.pid
+*.seed
+
+# OS/editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Docker/local data
+docker-data/
+mongo-data/
+redis-data/
+
+# Keys and credentials
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+service-account*.json
+credentials*.json
