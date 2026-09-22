@@ -1,46 +1,44 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Button from '../../components/ui/Button.jsx';
-import Input from '../../components/ui/Input.jsx';
-import { api } from '../../services/api.js';
-import { CATEGORIES } from '../../utils/constants.js';
-import { validateGig } from '../../utils/validators.js';
+import DashboardLayout from '../../components/layout/DashboardLayout.jsx';
+import GigForm from '../../components/gigs/GigForm.jsx';
+import GigPreview from '../../components/gigs/GigPreview.jsx';
+import { useCreateGig } from '../../features/gigs/gigHooks.js';
+import { ROUTES } from '../../lib/constants.js';
+import { toastError } from '../../services/toast.js';
+import { getErrorMessage, getFieldErrors } from '../../utils/getErrorMessage.js';
 
 export default function CreateGig() {
-  const [values, setValues] = useState({ title: '', category: CATEGORIES[0], price: '', description: '' });
-  const [errors, setErrors] = useState({});
   const navigate = useNavigate();
+  const createGig = useCreateGig();
+  const [previewValues, setPreviewValues] = useState(null);
 
-  const update = (key, value) => setValues((current) => ({ ...current, [key]: value }));
-
-  const submit = async (event) => {
-    event.preventDefault();
-    const nextErrors = validateGig(values);
-    setErrors(nextErrors);
-    if (Object.values(nextErrors).some(Boolean)) return;
-    await api.createGig(values);
-    navigate('/creator/gigs');
-  };
+  async function handleSubmit(values) {
+    try {
+      await createGig.mutateAsync(values);
+      navigate(ROUTES.creatorGigs);
+    } catch (error) {
+      const fieldErrors = getFieldErrors(error);
+      toastError(
+        fieldErrors
+          ? Object.values(fieldErrors)[0]
+          : getErrorMessage(error, "Couldn't create this gig."),
+      );
+    }
+  }
 
   return (
-    <section className="page-section narrow">
-      <h1>Create gig</h1>
-      <form className="panel" onSubmit={submit}>
-        <Input label="Title" value={values.title} onChange={(event) => update('title', event.target.value)} error={errors.title} />
-        <label className="field">
-          <span>Category</span>
-          <select value={values.category} onChange={(event) => update('category', event.target.value)}>
-            {CATEGORIES.map((category) => <option key={category}>{category}</option>)}
-          </select>
-          {errors.category ? <small>{errors.category}</small> : null}
-        </label>
-        <Input label="Price" type="number" value={values.price} onChange={(event) => update('price', event.target.value)} error={errors.price} />
-        <label className="field">
-          <span>Description</span>
-          <textarea value={values.description} onChange={(event) => update('description', event.target.value)} />
-        </label>
-        <Button type="submit">Publish gig</Button>
-      </form>
-    </section>
+    <DashboardLayout title="Create Gig" description="Publish a new gig to the marketplace.">
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
+        <div className="lg:col-span-2">
+          <div className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
+            <GigForm mode="create" onSubmit={handleSubmit} isSubmitting={createGig.isPending} onValuesChange={setPreviewValues} />
+          </div>
+        </div>
+        <div className="hidden lg:block">
+          <GigPreview values={previewValues} />
+        </div>
+      </div>
+    </DashboardLayout>
   );
 }

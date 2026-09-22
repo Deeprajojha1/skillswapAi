@@ -19,6 +19,13 @@ export const GIG_STATUS = {
   INACTIVE: 'inactive',
 };
 
+export const MODERATION_STATUS = {
+  PENDING: 'pending',
+  APPROVED: 'approved',
+  REJECTED: 'rejected',
+  FLAGGED: 'flagged',
+};
+
 export const PAYMENT_STATUS = {
   UNPAID: 'unpaid',
   PENDING: 'pending',

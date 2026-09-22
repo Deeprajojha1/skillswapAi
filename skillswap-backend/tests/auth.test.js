@@ -16,26 +16,16 @@ afterAll(async () => {
   await mongo.stop();
 });
 
-describe('auth routes', () => {
-  it('registers and logs in a user', async () => {
-    const register = await request(app).post('/api/auth/register').send({
-      name: 'Test User',
-      email: 'test@skillswap.local',
-      password: 'password123',
-      role: 'client',
-    });
+describe('demo role mode', () => {
+  it('returns a client demo user by default', async () => {
+    const res = await request(app).get('/api/users/me');
+    expect(res.status).toBe(200);
+    expect(res.body.data.role).toBe('client');
+  });
 
-    expect(register.status).toBe(201);
-    expect(register.body.data.token).toBeTruthy();
-    expect(register.headers['set-cookie']?.join(';')).toContain('skillswap_token');
-
-    const login = await request(app).post('/api/auth/login').send({
-      email: 'test@skillswap.local',
-      password: 'password123',
-    });
-
-    expect(login.status).toBe(200);
-    expect(login.body.data.user.email).toBe('test@skillswap.local');
-    expect(login.headers['set-cookie']?.join(';')).toContain('HttpOnly');
+  it('switches user context from request header', async () => {
+    const res = await request(app).get('/api/users/me').set('x-skillswap-role', 'creator');
+    expect(res.status).toBe(200);
+    expect(res.body.data.role).toBe('creator');
   });
 });

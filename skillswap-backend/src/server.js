@@ -7,6 +7,16 @@ import { createSocketServer } from './config/socket.js';
 const server = http.createServer(app);
 createSocketServer(server);
 
+server.on('error', (error) => {
+  if (error.code === 'EADDRINUSE') {
+    console.error(`Port ${env.port} is already in use.`);
+    console.error('Stop the running Docker/API server or set a different PORT in .env before starting dev server.');
+    process.exit(1);
+  }
+  console.error('Server error:', error);
+  process.exit(1);
+});
+
 connectDb()
   .then(() => {
     server.listen(env.port, () => {

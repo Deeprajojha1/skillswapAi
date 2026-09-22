@@ -1,27 +1,38 @@
-import { useState } from 'react';
-import { CalendarCheck } from 'lucide-react';
-import { api } from '../../services/api.js';
-import Button from '../ui/Button.jsx';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { createBookingSchema } from '../../features/bookings/bookingSchemas.js';
+import Textarea from '../ui/Textarea.jsx';
 import Input from '../ui/Input.jsx';
+import Button from '../ui/Button.jsx';
 
-export default function BookingForm({ gig, onBooked }) {
-  const [date, setDate] = useState('');
-  const [note, setNote] = useState('');
-
-  const submit = async (event) => {
-    event.preventDefault();
-    const booking = await api.createBooking({ gigId: gig.id, date, note, amount: gig.price });
-    onBooked?.(booking);
-  };
+export default function BookingForm({ onSubmit, isSubmitting }) {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({ resolver: zodResolver(createBookingSchema), defaultValues: { requirements: '', deadline: '' } });
 
   return (
-    <form className="panel" onSubmit={submit}>
-      <Input label="Preferred date" type="date" value={date} onChange={(event) => setDate(event.target.value)} required />
-      <label className="field">
-        <span>Project note</span>
-        <textarea value={note} onChange={(event) => setNote(event.target.value)} placeholder="Share goals, timeline, or references" />
-      </label>
-      <Button type="submit"><CalendarCheck size={18} />Request booking</Button>
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
+      <Textarea
+        label="Your requirements"
+        required
+        rows={5}
+        placeholder="Tell the creator exactly what you need, references, and any preferences."
+        error={errors.requirements?.message}
+        {...register('requirements')}
+      />
+      <Input
+        label="Preferred deadline"
+        type="date"
+        hint="Optional"
+        min={new Date().toISOString().split('T')[0]}
+        error={errors.deadline?.message}
+        {...register('deadline')}
+      />
+      <Button type="submit" fullWidth isLoading={isSubmitting} loadingText="Creating booking…">
+        Book Gig
+      </Button>
     </form>
   );
 }

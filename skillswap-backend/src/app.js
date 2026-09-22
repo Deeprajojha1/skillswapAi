@@ -1,5 +1,4 @@
 import compression from 'compression';
-import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import express from 'express';
 import helmet from 'helmet';
@@ -7,7 +6,6 @@ import morgan from 'morgan';
 import { env } from './config/env.js';
 import { errorHandler, notFound } from './middlewares/error.middleware.js';
 import { apiLimiter } from './middlewares/rateLimit.middleware.js';
-import authRoutes from './routes/auth.routes.js';
 import bookingRoutes from './routes/booking.routes.js';
 import gigRoutes from './routes/gig.routes.js';
 import notificationRoutes from './routes/notification.routes.js';
@@ -21,7 +19,6 @@ app.use(cors({ origin: env.clientUrl, credentials: true }));
 app.use(compression());
 app.use(express.json({ limit: '1mb' }));
 app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
 app.use(morgan(env.nodeEnv === 'production' ? 'combined' : 'dev'));
 app.use('/api', apiLimiter);
 
@@ -30,7 +27,6 @@ app.get('/health', (_req, res) => res.json({
   service: 'skillswap-backend',
   timestamp: new Date().toISOString(),
 }));
-app.use('/api/auth', authRoutes);
 app.use('/api/gigs', gigRoutes);
 app.use('/api/bookings', bookingRoutes);
 app.use('/api/users', userRoutes);
