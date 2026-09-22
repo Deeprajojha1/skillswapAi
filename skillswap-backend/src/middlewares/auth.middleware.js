@@ -1,11 +1,12 @@
 import ApiError from '../utils/ApiError.js';
 import User from '../models/User.js';
+import { env } from '../config/env.js';
 import { USER_ROLES } from '../utils/constants.js';
 
 const DEMO_USERS = {
   [USER_ROLES.CLIENT]: {
     name: 'Demo Client',
-    email: 'demo.client@skillswap.local',
+    email: env.demoClientEmail,
     password: 'demo-password',
     role: USER_ROLES.CLIENT,
   },

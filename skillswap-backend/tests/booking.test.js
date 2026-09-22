@@ -65,29 +65,18 @@ describe('booking routes', () => {
     expect(unavailable.status).toBe(400);
   });
 
-  it('creates and verifies a payment for an accepted booking', async () => {
+  it('pays an accepted booking directly', async () => {
     const incoming = await request(app).get('/api/bookings/incoming').set('x-skillswap-role', 'creator');
     const bookingId = incoming.body.data[0]._id;
 
-    const order = await request(app)
-      .post('/api/payments/create-order')
+    const paid = await request(app)
+      .post('/api/payments/pay')
       .set('x-skillswap-role', 'client')
       .send({ bookingId });
 
-    expect(order.status).toBe(201);
-    expect(order.body.data.amount).toBe(150);
-
-    const verified = await request(app)
-      .post('/api/payments/verify')
-      .set('x-skillswap-role', 'client')
-      .send({
-        orderId: order.body.data.orderId,
-        paymentId: 'mock_payment_1',
-        signature: 'mock_valid_signature',
-      });
-
-    expect(verified.status).toBe(200);
-    expect(verified.body.data.status).toBe('paid');
+    expect(paid.status).toBe(200);
+    expect(paid.body.data.amount).toBe(150);
+    expect(paid.body.data.status).toBe('paid');
   });
 
   it('returns persistent notifications for the creator', async () => {

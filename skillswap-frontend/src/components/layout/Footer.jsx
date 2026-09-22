@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Sparkles } from 'lucide-react';
+import { Handshake } from 'lucide-react';
 import { ROUTES, USER_ROLES } from '../../lib/constants.js';
 import { useRoleSwitch } from '../../hooks/useRoleSwitch.js';
 
@@ -11,7 +11,7 @@ export default function Footer() {
       <div className="mx-auto flex max-w-7xl flex-col items-center gap-3 px-4 py-8 text-center sm:flex-row sm:justify-between sm:px-6 sm:text-left lg:px-8">
         <div className="flex items-center gap-2">
           <span className="flex h-7 w-7 items-center justify-center rounded-md bg-indigo-600 text-white">
-            <Sparkles className="h-3.5 w-3.5" />
+            <Handshake className="h-3.5 w-3.5" />
           </span>
           <div>
             <p className="text-sm font-semibold text-slate-900">SkillSwap</p>

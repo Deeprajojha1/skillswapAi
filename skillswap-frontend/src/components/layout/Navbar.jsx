@@ -1,6 +1,6 @@
 import { Link, NavLink } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { LayoutDashboard, Menu, Sparkles, User } from 'lucide-react';
+import { Handshake, LayoutDashboard, Menu, User } from 'lucide-react';
 import { selectCurrentUser } from '../../app/store/slices/authSlice.js';
 import { toggleMobileNav } from '../../app/store/slices/uiSlice.js';
 import { ROUTES, USER_ROLES } from '../../lib/constants.js';
@@ -30,7 +30,7 @@ export default function Navbar() {
         <div className="flex min-w-0 flex-1 items-center gap-10">
           <Link to={ROUTES.home} className="flex shrink-0 items-center gap-2 font-bold text-slate-900">
             <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-indigo-600 text-white shadow-sm shadow-indigo-600/30">
-              <Sparkles className="h-4 w-4" />
+              <Handshake className="h-4 w-4" />
             </span>
             <span className="text-xl tracking-tight">SkillSwap</span>
           </Link>

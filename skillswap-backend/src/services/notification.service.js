@@ -1,9 +1,9 @@
 import Notification from '../models/Notification.js';
-import User from '../models/User.js';
-import { emailQueue, notificationQueue, safeAdd } from '../queues/index.js';
-import { sendEmail } from './email.service.js';
 import { emitToUser } from './socket.service.js';
 
+// In-app notifications only: persist to the DB and push over the socket.
+// (Email sending and the BullMQ/Redis queue layer that used to sit in
+// front of it have been removed.)
 export async function createNotification(payload) {
   const notification = await Notification.create({
     user: payload.userId,
@@ -20,39 +20,10 @@ export async function createNotification(payload) {
   return notification;
 }
 
-export async function queueNotification(payload) {
-  const notification = await createNotification(payload);
-  await safeAdd(notificationQueue, payload.type, { ...payload, alreadyPersisted: true }, async () => notification);
-  if (payload.email !== false) {
-    const user = await User.findById(payload.userId);
-    await queueEmail({
-      to: user?.email,
-      subject: payload.title,
-      text: payload.message,
-      html: `<p>${payload.message}</p>`,
-    });
-  }
-  return notification;
-}
-
-export async function queueEmail(payload) {
-  return safeAdd(emailQueue, 'email:send', payload, sendEmail);
-}
-
-export async function processNotificationJob(data) {
-  if (data.alreadyPersisted) return data;
-  const notification = await createNotification(data);
-  if (data.email !== false) {
-    const user = await User.findById(data.userId);
-    await queueEmail({
-      to: user?.email,
-      subject: data.title,
-      text: data.message,
-      html: `<p>${data.message}</p>`,
-    });
-  }
-  return notification;
-}
+// Kept as the call site's name across the codebase (booking/payment
+// services call `queueNotification`) even though nothing is queued
+// anymore — it just creates the notification directly.
+export const queueNotification = createNotification;
 
 export function listNotifications(userId) {
   return Notification.find({ user: userId }).sort({ createdAt: -1 });

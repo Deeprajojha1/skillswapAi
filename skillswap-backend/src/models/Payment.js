@@ -9,8 +9,7 @@ const paymentSchema = new mongoose.Schema(
     creator: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     provider: { type: String, required: true },
     orderId: { type: String, required: true },
-    paymentId: { type: String, default: null },
-    providerEventId: { type: String, default: null },
+    paymentId: { type: String },
     amount: { type: Number, required: true, min: 1 },
     currency: { type: String, default: 'INR' },
     status: { type: String, enum: Object.values(PAYMENT_RECORD_STATUS), default: PAYMENT_RECORD_STATUS.CREATED },
@@ -25,6 +24,5 @@ const paymentSchema = new mongoose.Schema(
 paymentSchema.index({ booking: 1 }, { unique: true });
 paymentSchema.index({ orderId: 1 });
 paymentSchema.index({ paymentId: 1 }, { unique: true, sparse: true });
-paymentSchema.index({ providerEventId: 1 }, { unique: true, sparse: true });
 
 export default mongoose.model('Payment', paymentSchema);

@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowRight, ShieldAlert } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import DashboardLayout from '../../components/layout/DashboardLayout.jsx';
 import PaymentSummary from '../../components/payments/PaymentSummary.jsx';
-import MockPaymentButton from '../../components/payments/MockPaymentButton.jsx';
+import PayButton from '../../components/payments/PayButton.jsx';
 import PaymentProcessing from '../../components/payments/PaymentProcessing.jsx';
 import Button from '../../components/ui/Button.jsx';
 import { PageLoader } from '../../components/ui/Spinner.jsx';
@@ -11,8 +11,6 @@ import ErrorState from '../../components/ui/ErrorState.jsx';
 import { useBooking } from '../../features/bookings/bookingHooks.js';
 import { BOOKING_STATUS, PAYMENT_STATUS, ROUTES } from '../../lib/constants.js';
 import { getErrorMessage } from '../../utils/getErrorMessage.js';
-
-const PAYMENT_PROVIDER = import.meta.env.VITE_PAYMENT_PROVIDER || 'mock';
 
 export default function PaymentPage() {
   const { bookingId } = useParams();
@@ -60,15 +58,7 @@ export default function PaymentPage() {
             </Button>
           </div>
         ) : canPay ? (
-          PAYMENT_PROVIDER === 'razorpay' ? (
-            <div className="flex items-center gap-2 rounded-xl border border-amber-200 bg-amber-50 p-3.5 text-xs text-amber-800">
-              <ShieldAlert className="h-4 w-4 shrink-0" />
-              Razorpay is not configured on this deployment yet. Switch VITE_PAYMENT_PROVIDER (and the backend) to
-              "mock" to test payments.
-            </div>
-          ) : (
-            <MockPaymentButton booking={booking} onStageChange={setStage} />
-          )
+          <PayButton booking={booking} onStageChange={setStage} />
         ) : (
           <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5 text-center text-sm text-slate-600">
             This booking isn&apos;t ready for payment yet. Payment is only available once a creator has accepted your

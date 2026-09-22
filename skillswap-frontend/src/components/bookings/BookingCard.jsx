@@ -24,8 +24,12 @@ export default function BookingCard({ booking, perspective = 'client' }) {
       className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-5"
     >
       <div className="flex flex-col gap-4 sm:flex-row">
-        <Link to={detailsRoute} className="h-24 w-full shrink-0 overflow-hidden rounded-xl sm:w-32">
-          <Image src={booking.gig?.image?.url} alt={booking.gig?.title} className="h-24 w-full sm:w-32" />
+        <Link to={detailsRoute} className="h-40 w-full shrink-0 overflow-hidden rounded-xl sm:h-24 sm:w-32">
+          <Image
+            src={booking.gig?.image?.url}
+            alt={booking.gig?.title}
+            className="h-40 w-full object-cover sm:h-24 sm:w-32"
+          />
         </Link>
 
         <div className="min-w-0 flex-1">

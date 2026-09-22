@@ -6,9 +6,9 @@ import {
   Briefcase,
   CalendarCheck,
   CreditCard,
+  Handshake,
   Search,
   ShieldCheck,
-  Sparkles,
   Zap,
 } from 'lucide-react';
 import PageContainer from '../../components/layout/PageContainer.jsx';
@@ -21,7 +21,7 @@ const STEPS = [
   { icon: Search, title: 'Discover', description: 'Browse gigs by category, search by skill, and compare creators.' },
   { icon: CalendarCheck, title: 'Book', description: 'Send a booking request with your requirements and deadline.' },
   { icon: CreditCard, title: 'Pay securely', description: 'Pay only once a creator accepts — the price is locked in upfront.' },
-  { icon: Sparkles, title: 'Get it delivered', description: 'Track progress and mark the booking complete when you’re happy.' },
+  { icon: Handshake, title: 'Get it delivered', description: 'Track progress and mark the booking complete when you’re happy.' },
 ];
 
 const FEATURES = [
@@ -44,7 +44,7 @@ export default function Landing() {
             animate={{ opacity: 1, y: 0 }}
             className="mb-4 inline-flex items-center gap-1.5 rounded-full bg-indigo-100 px-3 py-1 text-xs font-medium text-indigo-700"
           >
-            <Sparkles className="h-3.5 w-3.5" /> A Creator Gig Marketplace
+            <Handshake className="h-3.5 w-3.5" /> A Creator Gig Marketplace
           </motion.span>
           <motion.h1
             initial={{ opacity: 0, y: 12 }}
@@ -67,23 +67,26 @@ export default function Landing() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.15 }}
-            className="mt-8 flex flex-col gap-3 sm:flex-row"
+            className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-stretch"
           >
-            <Link to={ROUTES.marketplace}>
-              <Button size="lg" icon={Search} fullWidth>
+            <Link to={ROUTES.marketplace} className="flex sm:flex-1">
+              <Button size="lg" icon={Search} fullWidth className="min-h-14 whitespace-nowrap">
                 Explore the marketplace
               </Button>
             </Link>
             {!isCreator ? (
-              <Button
-                size="lg"
-                variant="secondary"
-                icon={ArrowRight}
-                fullWidth
-                onClick={() => switchRole(USER_ROLES.CREATOR)}
-              >
-                Become a creator
-              </Button>
+              <div className="flex sm:flex-1">
+                <Button
+                  size="lg"
+                  variant="secondary"
+                  icon={ArrowRight}
+                  fullWidth
+                  className="min-h-14 whitespace-nowrap"
+                  onClick={() => switchRole(USER_ROLES.CREATOR)}
+                >
+                  Become a creator
+                </Button>
+              </div>
             ) : null}
           </motion.div>
         </PageContainer>
