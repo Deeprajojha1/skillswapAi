@@ -27,6 +27,7 @@ export function useGigs({ search = '', category = '', sort = 'newest' } = {}) {
     queryFn: () => fetchGigs({ search, category }),
     select: (data) => sortGigs(data, sort),
     placeholderData: (previousData) => previousData,
+    refetchOnMount: 'always',
   });
 }
 

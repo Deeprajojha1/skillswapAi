@@ -34,9 +34,14 @@ export function getAvatarColor(seed = '') {
  * The backend falls back to a `local-upload://<filename>` pseudo-URL when
  * Cloudinary isn't configured. That string is not renderable by <img>, so we
  * detect it (and any other non-http(s) value) and show a placeholder instead.
+ *
+ * `blob:` and `data:` URLs ARE renderable and must be allowed through — the
+ * gig image uploader's live preview (see hooks/useObjectUrl.js) renders a
+ * freshly-selected file via `URL.createObjectURL`, which produces a
+ * `blob:http://localhost:...` URL, not an http(s) one.
  */
 export function isRenderableImageUrl(url) {
-  return typeof url === 'string' && /^https?:\/\//i.test(url);
+  return typeof url === 'string' && /^(https?|blob|data):/i.test(url);
 }
 
 export function truncate(text = '', max = 120) {

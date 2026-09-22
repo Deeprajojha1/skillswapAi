@@ -17,7 +17,7 @@ import { createGigSchema, gigQuerySchema, reviewGigSchema, updateGigSchema } fro
 
 const router = Router();
 
-router.get('/', validate(gigQuerySchema, 'query'), getGigs);
+router.get('/',  getGigs);
 router.get('/mine', requireAuth, requireRole('creator', 'admin'), getMyGigs);
 router.get('/review-queue', requireAuth, requireRole('admin'), getReviewQueue);
 router.get('/:id', optionalAuth, getGig);
