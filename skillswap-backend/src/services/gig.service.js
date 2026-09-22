@@ -40,8 +40,8 @@ export function createGig(payload, creatorId) {
   return Gig.create({
     ...payload,
     creator: creatorId,
-    status: GIG_STATUS.PAUSED,
-    moderationStatus: MODERATION_STATUS.PENDING,
+    status: GIG_STATUS.ACTIVE,
+    moderationStatus: MODERATION_STATUS.APPROVED,
     lastSubmittedAt: new Date(),
   });
 }
@@ -67,6 +67,16 @@ export async function updateGig(id, payload, user) {
     });
   }
   return gig.save();
+}
+
+export async function deleteGig(id, user) {
+  const gig = await Gig.findById(id);
+  if (!gig) throw new ApiError(404, 'Gig not found');
+  if (gig.creator.toString() !== user.id && user.role !== 'admin') {
+    throw new ApiError(403, 'Only the creator can delete this gig');
+  }
+  await gig.deleteOne();
+  return gig;
 }
 
 export async function reviewGig(id, payload, reviewer) {

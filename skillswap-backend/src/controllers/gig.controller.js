@@ -1,5 +1,5 @@
 import { similarGigs } from '../services/discovery.service.js';
-import { createGig, getGigById, listGigs, listMyGigs, listReviewQueue, reviewGig, updateGig } from '../services/gig.service.js';
+import { createGig, deleteGig, getGigById, listGigs, listMyGigs, listReviewQueue, reviewGig, updateGig } from '../services/gig.service.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
 import { sendCreated, sendSuccess } from '../utils/response.js';
 
@@ -18,6 +18,10 @@ export const postGig = asyncHandler(async (req, res) => {
 
 export const patchGig = asyncHandler(async (req, res) => {
   sendSuccess(res, await updateGig(req.params.id, req.body, req.user), 'Gig updated');
+});
+
+export const removeGig = asyncHandler(async (req, res) => {
+  sendSuccess(res, await deleteGig(req.params.id, req.user), 'Gig deleted');
 });
 
 export const getSimilarGigs = asyncHandler(async (req, res) => {

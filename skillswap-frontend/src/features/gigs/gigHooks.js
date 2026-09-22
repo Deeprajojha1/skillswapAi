@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { createGig, fetchGig, fetchGigs, fetchMyGigs, fetchSimilarGigs, updateGig } from './gigApi.js';
+import { createGig, deleteGig, fetchGig, fetchGigs, fetchMyGigs, fetchSimilarGigs, updateGig } from './gigApi.js';
 import { QUERY_KEYS } from '../../lib/constants.js';
 import { toastSuccess } from '../../services/toast.js';
 
@@ -77,6 +77,19 @@ export function useUpdateGig(gigId) {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.myGigs });
       queryClient.setQueryData(QUERY_KEYS.gig(gigId), gig);
       toastSuccess('Gig updated successfully.');
+    },
+  });
+}
+
+export function useDeleteGig() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: deleteGig,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['gigs'] });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.myGigs });
+      toastSuccess('Gig deleted successfully.');
     },
   });
 }

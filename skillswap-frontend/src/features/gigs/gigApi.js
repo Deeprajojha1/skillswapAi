@@ -44,3 +44,8 @@ export async function updateGig(gigId, payload) {
   const { data } = await apiClient.patch(`/gigs/${gigId}`, payload);
   return data.data;
 }
+
+export async function deleteGig(gigId) {
+  const { data } = await apiClient.delete(`/gigs/${gigId}`);
+  return data.data;
+}

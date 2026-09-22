@@ -6,12 +6,17 @@ import { TableSkeleton } from '../../components/ui/Skeleton.jsx';
 import EmptyState from '../../components/ui/EmptyState.jsx';
 import ErrorState from '../../components/ui/ErrorState.jsx';
 import Button from '../../components/ui/Button.jsx';
-import { useMyGigs } from '../../features/gigs/gigHooks.js';
+import { useDeleteGig, useMyGigs } from '../../features/gigs/gigHooks.js';
 import { ROUTES } from '../../lib/constants.js';
 import { getErrorMessage } from '../../utils/getErrorMessage.js';
 
 export default function MyGigs() {
   const { data: myGigs, isLoading, isError, error, refetch } = useMyGigs();
+  const deleteGig = useDeleteGig();
+
+  function handleDelete(gigId) {
+    deleteGig.mutate(gigId);
+  }
 
   return (
     <DashboardLayout
@@ -44,7 +49,12 @@ export default function MyGigs() {
       ) : (
         <div className="space-y-3">
           {myGigs.map((gig) => (
-            <GigManagementCard key={gig._id} gig={gig} />
+            <GigManagementCard
+              key={gig._id}
+              gig={gig}
+              onDelete={handleDelete}
+              isDeleting={deleteGig.isPending && deleteGig.variables === gig._id}
+            />
           ))}
         </div>
       )}

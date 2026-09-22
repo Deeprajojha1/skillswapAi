@@ -17,27 +17,23 @@ afterAll(async () => {
 });
 
 describe('gig routes', () => {
-  it('holds new gigs from public feed until reviewed', async () => {
+  it('shows newly created gigs in the public feed', async () => {
     const created = await request(app)
       .post('/api/gigs')
       .set('x-skillswap-role', 'creator')
       .send({ title: 'Build a portfolio', description: 'A polished responsive portfolio site.', category: 'Web Development', rate: 200 });
 
     expect(created.status).toBe(201);
-    expect(created.body.data.moderationStatus).toBe('pending');
-    expect(created.body.data.status).toBe('paused');
+    expect(created.body.data.moderationStatus).toBe('approved');
+    expect(created.body.data.status).toBe('active');
 
     const list = await request(app).get('/api/gigs');
     expect(list.status).toBe(200);
-    expect(list.body.data).toHaveLength(0);
+    expect(list.body.data).toHaveLength(1);
+    expect(list.body.data[0]._id).toBe(created.body.data._id);
 
-    const hiddenDetail = await request(app).get(`/api/gigs/${created.body.data._id}`);
-    expect(hiddenDetail.status).toBe(404);
-
-    const creatorPreview = await request(app)
-      .get(`/api/gigs/${created.body.data._id}`)
-      .set('x-skillswap-role', 'creator');
-    expect(creatorPreview.status).toBe(200);
+    const publicDetail = await request(app).get(`/api/gigs/${created.body.data._id}`);
+    expect(publicDetail.status).toBe(200);
   });
 
   it('lets admin approve gigs and public feed orders low-risk newest first', async () => {
@@ -97,5 +93,21 @@ describe('gig routes', () => {
 
     const afterEdit = await request(app).get('/api/gigs?category=Music');
     expect(afterEdit.body.data).toHaveLength(0);
+  });
+
+  it('lets the creator delete their gig', async () => {
+    const created = await request(app)
+      .post('/api/gigs')
+      .set('x-skillswap-role', 'creator')
+      .send({ title: 'Gig to delete', description: 'This gig will be removed by its creator.', category: 'Tutoring', rate: 150 });
+
+    await request(app)
+      .delete(`/api/gigs/${created.body.data._id}`)
+      .set('x-skillswap-role', 'creator')
+      .expect(200);
+
+    await request(app)
+      .get(`/api/gigs/${created.body.data._id}`)
+      .expect(404);
   });
 });

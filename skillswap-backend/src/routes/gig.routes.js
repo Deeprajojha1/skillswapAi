@@ -8,6 +8,7 @@ import {
   patchGig,
   patchGigReview,
   postGig,
+  removeGig,
 } from '../controllers/gig.controller.js';
 import { optionalAuth, requireAuth } from '../middlewares/auth.middleware.js';
 import { requireRole } from '../middlewares/role.middleware.js';
@@ -32,6 +33,7 @@ router.post(
   postGig,
 );
 router.patch('/:id', requireAuth, requireRole('creator', 'admin'), validate(updateGigSchema), patchGig);
+router.delete('/:id', requireAuth, requireRole('creator', 'admin'), removeGig);
 router.patch('/:id/review', requireAuth, requireRole('admin'), validate(reviewGigSchema), patchGigReview);
 
 export default router;

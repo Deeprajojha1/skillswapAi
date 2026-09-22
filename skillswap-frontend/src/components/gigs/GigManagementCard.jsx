@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Pencil, Star } from 'lucide-react';
+import { Pencil, Star, Trash2 } from 'lucide-react';
 import Image from '../ui/Image.jsx';
 import GigStatusBadge from './GigStatusBadge.jsx';
 import Badge from '../ui/Badge.jsx';
@@ -13,9 +13,13 @@ const MODERATION_TONES = {
   [MODERATION_STATUS.FLAGGED]: 'danger',
 };
 
-/** Row card for the creator's "My Gigs" list. Edit is the only mutation this
- * card offers — see the "no gig status toggle" note in MyGigs.jsx for why. */
-export default function GigManagementCard({ gig }) {
+export default function GigManagementCard({ gig, onDelete, isDeleting = false }) {
+  function handleDelete() {
+    if (window.confirm(`Delete "${gig.title}"? This action cannot be undone.`)) {
+      onDelete(gig._id);
+    }
+  }
+
   return (
     <div className="flex flex-col gap-4 rounded-2xl border border-slate-200 bg-white p-4 sm:flex-row sm:items-center">
       <Link to={ROUTES.gigDetails(gig._id)} className="h-20 w-full shrink-0 overflow-hidden rounded-lg sm:w-32">
@@ -46,12 +50,22 @@ export default function GigManagementCard({ gig }) {
         </div>
       </div>
 
-      <Link
-        to={ROUTES.creatorEditGig(gig._id)}
-        className="inline-flex items-center justify-center gap-1.5 self-start rounded-lg border border-slate-300 px-3.5 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 sm:self-center"
-      >
-        <Pencil className="h-3.5 w-3.5" /> Edit
-      </Link>
+      <div className="flex items-center gap-2 self-start sm:self-center">
+        <Link
+          to={ROUTES.creatorEditGig(gig._id)}
+          className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 px-3.5 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+        >
+          <Pencil className="h-3.5 w-3.5" /> Edit
+        </Link>
+        <button
+          type="button"
+          onClick={handleDelete}
+          disabled={isDeleting}
+          className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-red-200 px-3.5 py-2 text-sm font-medium text-red-600 hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          <Trash2 className="h-3.5 w-3.5" /> {isDeleting ? 'Deleting...' : 'Delete'}
+        </button>
+      </div>
     </div>
   );
 }
